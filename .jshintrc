@@ -1,0 +1,10 @@
+{
+    "esversion": 6,
+    "unused": true,    
+    "forin": true,
+    "noreturnawait": true,
+    "browser": false,    
+    "devel": true,
+    "debug": false,    
+    "node": true
+}
