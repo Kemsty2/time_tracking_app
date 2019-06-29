@@ -1,11 +1,11 @@
 const domain = require("domain");
-const cluster = require('cluster');
+const cluster = require("cluster");
 
 let count = 0;
 
 // (stackoverflow : https://gist.github.com/isaacs/5264418)
 const domainMiddleWare = function(req, res, next) {
-  let d = domain.create();  
+  let d = domain.create();
 
   d.id = domainMiddleWare.id(req);
   d.add(req);
@@ -19,7 +19,7 @@ const domainMiddleWare = function(req, res, next) {
         process.exit(1);
       }, 30000);
       // But don't keep the process open just for that!
-      killtimer.unref();      
+      killtimer.unref();
 
       //    Send to master we are disconnect
       cluster.worker.disconnect();
@@ -28,37 +28,26 @@ const domainMiddleWare = function(req, res, next) {
       console.error("error 500", error.stack);
     }
   });
-  
 };
 
-domainMiddleWare.id = function(req){
-  return new Date().getTime() + (count ++);
-}
+domainMiddleWare.id = function(req) {
+  return new Date().getTime() + count++;
+};
 
 exports.domainMiddleWare = domainMiddleWare;
 // (stackoverflow : https://gist.github.com/isaacs/5264418)
 
 const errorHandler = function(err, req, res, next) {
   try {
-    let status = err.status || 500, message = err.message || "Interval Server Error";
-    switch (status) {
-      case 404:
-        res.status(status).json({
-          text: `can't get ${req.path}`,
-          message: `${process.domain.id} with ${message}`
-        });
-        break;
+    let status = err.status || 500,
+      message = err.message || "Interval Server Error";
 
-      default:
-        res.status(status).json({
-          text: "something went wrong",
-          message: `${process.domain.id} with ${message}`
-        });
-        break;
-    }
+    res.status(status).json({
+      message: `${process.domain.id} with ${message}`
+    });
   } catch (error) {
     console.error(error);
   }
-}
+};
 
-exports.errorHandler = errorHandler
+exports.errorHandler = errorHandler;

@@ -14,6 +14,7 @@ const { domainMiddleWare, errorHandler } = require("./middleware");
 
 const app = express();
 
+
 // #region Middlewares
 
 //  #region body-parser middleware
@@ -43,9 +44,16 @@ process.env.NODE_ENV === "production"
 //  #endregion  End morgan
 app.use(domainMiddleWare);
 
+app.use((req, res, next) => {
+  res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+  res.setHeader("Pragma", "no-cache");
+  res.setHeader("Expires", "0");
+  next();
+});
+
 /*  #endregion Middlewares */
 
-app.use("/", route);
+app.use("/api", route);
 
 //  #region error handler middleware
 app.use(function(req, res, next) {
